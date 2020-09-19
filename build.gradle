@@ -1,7 +1,7 @@
 // buildscript {
 // 	repositories {
 // 		// add maven resp URL on 2020-09-18 18:46:38
-// 		maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+// 		maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
 // 	}
 // }
 
@@ -294,7 +294,7 @@ configure(allprojects) { project ->
 			cacheChangingModulesFor 0, "seconds"
 		}
 		repositories {
-			maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+			maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
 			maven { url "https://repo.spring.io/libs-spring-framework-build" }
 			maven { url "https://repo.spring.io/milestone" } // Reactor
 			mavenCentral()

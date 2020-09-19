@@ -1,3 +1,10 @@
+// buildscript {
+// 	repositories {
+// 		// add maven resp URL on 2020-09-18 18:46:38
+// 		maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+// 	}
+// }
+
 plugins {
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE' apply false
 	id 'io.spring.nohttp' version '0.0.5.RELEASE'
@@ -287,9 +294,10 @@ configure(allprojects) { project ->
 			cacheChangingModulesFor 0, "seconds"
 		}
 		repositories {
-			mavenCentral()
+			maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
 			maven { url "https://repo.spring.io/libs-spring-framework-build" }
 			maven { url "https://repo.spring.io/milestone" } // Reactor
+			mavenCentral()
 		}
 	}
 	configurations.all {

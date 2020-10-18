@@ -18,6 +18,6 @@ public class NaccoFactoryBean implements FactoryBean<Object> {
 
 	@Override
 	public Class<?> getObjectType() {
-		return null;
+		return User.class;
 	}
 }

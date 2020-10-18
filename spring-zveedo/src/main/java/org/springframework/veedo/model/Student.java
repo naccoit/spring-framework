@@ -1,23 +1,28 @@
 package org.springframework.veedo.model;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 /**
  * @author naccoitcc
- * @date 2020/9/19 12:44
+ * @date 2020/10/18 01:37
  */
 @Component
-public class User implements InitializingBean {
+public class Student {
 
-	@Autowired
-	Person getPerson;
+	private Integer id;
 
 	private String name;
 
 	private Integer age;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -33,10 +38,5 @@ public class User implements InitializingBean {
 
 	public void setAge(Integer age) {
 		this.age = age;
-	}
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		System.out.println("初始化...getPerson.getName()");
 	}
 }

@@ -1,5 +1,7 @@
 package org.springframework.veedo.config;
 
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,5 +18,10 @@ public class AppConfig {
 	@Bean
 	public Person getPerson(){
 		return new Person();
+	}
+
+	@Bean
+	public ApplicationListener<ApplicationEvent> applicationListener() {
+		return event -> System.out.println("接收到了一个事件");
 	}
 }

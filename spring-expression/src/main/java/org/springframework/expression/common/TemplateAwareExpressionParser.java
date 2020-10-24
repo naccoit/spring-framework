@@ -85,6 +85,8 @@ public abstract class TemplateAwareExpressionParser implements ExpressionParser 
 	 * @param expressionString the expression string
 	 * @return the parsed expressions
 	 * @throws ParseException when the expressions cannot be parsed
+	 *
+	 * 这里解析'#{}'
 	 */
 	private Expression[] parseExpressions(String expressionString, ParserContext context) throws ParseException {
 		List<Expression> expressions = new ArrayList<>();

@@ -16,7 +16,9 @@ public class MainTest {
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
 //		System.out.println(applicationContext.getBean("naccoFactoryBean"));
-		System.out.println(applicationContext.getBean("user"));
+		Person person = (Person) applicationContext.getBean("person");
+		System.out.println(person.getName());
+
 //		System.out.println(applicationContext.getBean("naccoFactoryBean"));
 
 //		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();

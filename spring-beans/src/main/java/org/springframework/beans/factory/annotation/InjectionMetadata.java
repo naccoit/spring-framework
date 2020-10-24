@@ -128,7 +128,7 @@ public class InjectionMetadata {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Processing injected element of bean '" + beanName + "': " + element);
 				}
-				// 注入点有可能是field,有可能是method
+				// 对每个注入点进行注入,注入点有可能是field,有可能是method
 				element.inject(target, beanName, pvs);
 			}
 		}
@@ -231,10 +231,13 @@ public class InjectionMetadata {
 
 		/**
 		 * Either this or {@link #getResourceToInject} needs to be overridden.
+		 *
+		 * @Resource 的注入逻辑
 		 */
 		protected void inject(Object target, @Nullable String requestingBeanName, @Nullable PropertyValues pvs)
 				throws Throwable {
 
+			// 是属性,则反射赋值
 			if (this.isField) {
 				Field field = (Field) this.member;
 				ReflectionUtils.makeAccessible(field);

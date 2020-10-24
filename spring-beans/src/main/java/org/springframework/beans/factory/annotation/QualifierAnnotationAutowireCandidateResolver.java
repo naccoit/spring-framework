@@ -359,10 +359,13 @@ public class QualifierAnnotationAutowireCandidateResolver extends GenericTypeAwa
 
 	/**
 	 * Determine a suggested value from any of the given candidate annotations.
+	 *
+	 * 解析@Value原信息,并返回value属性值
 	 */
 	@Nullable
 	protected Object findValue(Annotation[] annotationsToSearch) {
 		if (annotationsToSearch.length > 0) {   // qualifier annotations have to be local
+			// 解析 @Value 元信息
 			AnnotationAttributes attr = AnnotatedElementUtils.getMergedAnnotationAttributes(
 					AnnotatedElementUtils.forAnnotations(annotationsToSearch), this.valueAnnotationType);
 			if (attr != null) {
@@ -375,6 +378,8 @@ public class QualifierAnnotationAutowireCandidateResolver extends GenericTypeAwa
 	/**
 	 * Extract the value attribute from the given annotation.
 	 * @since 4.3
+	 *
+	 * 返回"value"值
 	 */
 	protected Object extractValue(AnnotationAttributes attr) {
 		Object value = attr.get(AnnotationUtils.VALUE);

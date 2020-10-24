@@ -1,5 +1,6 @@
 package org.springframework.veedo.model;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Person {
 
-	private String name = "我是教师";
+	@Value("我是教师")
+	private String name;
 
 	public String getName() {
 		return name;

@@ -241,9 +241,15 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 	}
 
 
+	/**
+	 * 找注入点
+	 * @param beanDefinition the merged bean definition for the bean
+	 * @param beanType the actual type of the managed bean instance
+	 * @param beanName the name of the bean
+	 */
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
-		// 获取beanType中的注入点
+		// 获取beanType中的注入点,将类中的注入点全部拿到
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, beanType, null);
 		metadata.checkConfigMembers(beanDefinition);
 	}
@@ -461,6 +467,8 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 					if (metadata != null) {
 						metadata.clear(pvs);
 					}
+
+					// 寻找当前clazz中的注入点,把所有的注入点整合成为一个InjectedElement
 					metadata = buildAutowiringMetadata(clazz);
 					this.injectionMetadataCache.put(cacheKey, metadata);
 				}
@@ -478,9 +486,11 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 		List<InjectionMetadata.InjectedElement> elements = new ArrayList<>();
 		Class<?> targetClass = clazz;
 
+		// do while的作用主要是为了遍历父类,找相应的注入点
 		do {
 			final List<InjectionMetadata.InjectedElement> currElements = new ArrayList<>();
 
+			// 处理当前类里面的字段
 			ReflectionUtils.doWithLocalFields(targetClass, field -> {
 				// 查找注入点, @Autowired, @Value, @Inject
 				MergedAnnotation<?> ann = findAutowiredAnnotation(field);
@@ -501,6 +511,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 			});
 
 
+			// 处理当前类里面的方法
 			// 遍历方法,看是否有@Autowired, @Value, @Inject注解
 			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
 				Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
@@ -539,6 +550,8 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 	private MergedAnnotation<?> findAutowiredAnnotation(AccessibleObject ao) {
 		// 查看当前字段上是否存在@Autowired, @Value, @Inject注解,存在其中一个则返回,表示可以注入
 		MergedAnnotations annotations = MergedAnnotations.from(ao);
+		// autowiredAnnotationTypes是一个linkedList,所以会按照顺序去判断当前字段中是否有Autowired注解,如果有则返回
+		// 如果没有Autowired注解,则判断是否有Value注解,再判断是否有Inject注解(依次)
 		for (Class<? extends Annotation> type : this.autowiredAnnotationTypes) {
 			MergedAnnotation<?> annotation = annotations.get(type);
 			if (annotation.isPresent()) {
@@ -650,12 +663,15 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 				value = resolvedCachedArgument(beanName, this.cachedFieldValue);
 			}
 			else {
+				// Spring在真正查找属性对应的对象之前,会先将该属性的描述封装成一个DependencyDescriptor,里面保存了field,是否需要"必须"
 				DependencyDescriptor desc = new DependencyDescriptor(field, this.required);
 				desc.setContainingClass(bean.getClass());
+				// 对已经找到的bean进行缓存:的属性
 				Set<String> autowiredBeanNames = new LinkedHashSet<>(1);
 				Assert.state(beanFactory != null, "No BeanFactory available");
 				TypeConverter typeConverter = beanFactory.getTypeConverter();
 				try {
+					// 根据field或者方法的参数去寻找合适的bean (desc:依赖描述)
 					value = beanFactory.resolveDependency(desc, beanName, autowiredBeanNames, typeConverter);
 				}
 				catch (BeansException ex) {
@@ -665,11 +681,14 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 					if (!this.cached) {
 						if (value != null || this.required) {
 							this.cachedFieldValue = desc;
+							// 注册当前bean依赖了哪些其他的bean的name
 							registerDependentBeans(beanName, autowiredBeanNames);
+							// size==1,表示已经找到了可注入的bean
 							if (autowiredBeanNames.size() == 1) {
 								String autowiredBeanName = autowiredBeanNames.iterator().next();
 								if (beanFactory.containsBean(autowiredBeanName) &&
 										beanFactory.isTypeMatch(autowiredBeanName, field.getType())) {
+									// 对得到的对象进行缓存
 									this.cachedFieldValue = new ShortcutDependencyDescriptor(
 											desc, autowiredBeanName, field.getType());
 								}
@@ -682,6 +701,8 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 					}
 				}
 			}
+
+			// 反射设置值
 			if (value != null) {
 				ReflectionUtils.makeAccessible(field);
 				field.set(bean, value);

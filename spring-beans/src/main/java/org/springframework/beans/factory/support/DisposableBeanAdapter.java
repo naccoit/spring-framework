@@ -379,6 +379,8 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 	 * Check whether the given bean has any kind of destroy method to call.
 	 * @param bean the bean instance
 	 * @param beanDefinition the corresponding bean definition
+	 *
+	 * 判断是否是destroy方法
 	 */
 	public static boolean hasDestroyMethod(Object bean, RootBeanDefinition beanDefinition) {
 		if (bean instanceof DisposableBean || bean instanceof AutoCloseable) {

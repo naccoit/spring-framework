@@ -18,6 +18,7 @@ public class MainTest {
 //		System.out.println(applicationContext.getBean("naccoFactoryBean"));
 		Person person = (Person) applicationContext.getBean("person");
 		System.out.println(person.getName());
+		System.out.println(person.getUser());
 
 //		System.out.println(applicationContext.getBean("naccoFactoryBean"));
 

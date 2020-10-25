@@ -660,6 +660,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 			Field field = (Field) this.member;
 			Object value;
 			if (this.cached) {
+				// 当前注入点已经注入过了,有缓存了,则利用cacheFieldValue去寻找对应的bean
 				value = resolvedCachedArgument(beanName, this.cachedFieldValue);
 			}
 			else {

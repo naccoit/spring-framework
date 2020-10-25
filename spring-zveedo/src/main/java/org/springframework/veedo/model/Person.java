@@ -11,10 +11,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class Person {
 
-	@Value("我是教师")
+	@Value("#{24}")
 	private String name;
+
+	@Value("#{user}")
+	private User user;
 
 	public String getName() {
 		return name;
+	}
+
+	public User getUser() {
+		return user;
 	}
 }

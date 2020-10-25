@@ -237,17 +237,20 @@ public class InjectionMetadata {
 		protected void inject(Object target, @Nullable String requestingBeanName, @Nullable PropertyValues pvs)
 				throws Throwable {
 
-			// 是属性,则反射赋值
+			// 如果是属性,则反射赋值
 			if (this.isField) {
 				Field field = (Field) this.member;
 				ReflectionUtils.makeAccessible(field);
 				field.set(target, getResourceToInject(target, requestingBeanName));
 			}
 			else {
+				// 检查当前属性是不是通过by_name和by_type来注入的
 				if (checkPropertySkipping(pvs)) {
 					return;
 				}
 				try {
+					// 如果是方法,则通过方法赋值
+					// 这里的方法并不一定是要setXXX方法
 					Method method = (Method) this.member;
 					ReflectionUtils.makeAccessible(method);
 					method.invoke(target, getResourceToInject(target, requestingBeanName));

@@ -85,6 +85,13 @@ public class AnnotatedBeanDefinitionReader {
 		Assert.notNull(environment, "Environment must not be null");
 		this.registry = registry;
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
+
+		// 生成并注册5个BeanDefinition(开天辟地5BD)
+		// 1.ConfigurationClassPostProcessor
+		// 2.AutowiredAnnotationBeanPostProcessor
+		// 3.CommonAnnotationBeanPostProcessor
+		// 4.EventListenerMethodProcessor
+		// 5.DefaultEventListenerFactory
 		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 	}
 

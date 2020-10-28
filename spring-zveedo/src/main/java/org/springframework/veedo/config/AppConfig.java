@@ -5,7 +5,9 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.veedo.model.Person;
+import org.springframework.veedo.model.User;
 
 /**
  * @author naccoitcc
@@ -13,6 +15,7 @@ import org.springframework.veedo.model.Person;
  */
 @Configuration
 @ComponentScan("org.springframework.veedo")
+@Import(VeedoBeanFactoryPostProcessor.class)
 public class AppConfig {
 
 	@Bean

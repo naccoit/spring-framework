@@ -65,9 +65,19 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
+		// 在执行这个构造方法之前,会先执行父类的构造方法,会初始化一个beanFactory = new DefaultListableBeanFactory();
 		StartupStep createAnnotatedBeanDefReader = this.getApplicationStartup().start("spring.context.annotated-bean-reader.create");
+
+		// 生成并注册5个BeanDefinition(开天辟地5BD)
+		// 1.ConfigurationClassPostProcessor
+		// 2.AutowiredAnnotationBeanPostProcessor
+		// 3.CommonAnnotationBeanPostProcessor
+		// 4.EventListenerMethodProcessor
+		// 5.DefaultEventListenerFactory
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		createAnnotatedBeanDefReader.end();
+
+		// 注册默认的includeFilter,过滤,生成
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
@@ -88,8 +98,16 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * {@link Configuration @Configuration} classes
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
+		// 1.创建BeanFactory
+		// 2.生成AnnotatedBeanDefinitionReader
+		// 3.生成ClassPathBeanDefinitionScanner
 		this();
+
+		// 利用reader吧componentClasses注册为一个BeanDefinition
 		register(componentClasses);
+
+		// 调用AbstractApplicationContext的refresh()方法,模板模式,会启动ApplicationContext
+		// 为什么叫refresh,而不叫start?
 		refresh();
 	}
 

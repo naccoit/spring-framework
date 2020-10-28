@@ -8,6 +8,8 @@ import org.springframework.context.ApplicationEvent;
  */
 public class DemoEvent extends ApplicationEvent {
 
+	public static final long serialVersionUID = 1L;
+
 	private String name;
 
 	private String age;

@@ -260,6 +260,13 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 		this.injectionMetadataCache.remove(beanName);
 	}
 
+	/**
+	 * 推断构造方法:具体操作内容
+	 * @param beanClass the raw class of the bean (never {@code null})
+	 * @param beanName the name of the bean
+	 * @return
+	 * @throws BeanCreationException
+	 */
 	@Override
 	@Nullable
 	public Constructor<?>[] determineCandidateConstructors(Class<?> beanClass, final String beanName)
@@ -308,7 +315,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 				if (candidateConstructors == null) {
 					Constructor<?>[] rawCandidates;
 					try {
-						rawCandidates = beanClass.getDeclaredConstructors();
+						rawCandidates = beanClass.getDeclaredConstructors();// 获取所有的构造方法
 					}
 					catch (Throwable ex) {
 						throw new BeanCreationException(beanName,
@@ -327,7 +334,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 						else if (primaryConstructor != null) {
 							continue;
 						}
-						MergedAnnotation<?> ann = findAutowiredAnnotation(candidate);
+						MergedAnnotation<?> ann = findAutowiredAnnotation(candidate);// 判断方法上是否有注解@Autowired, @Value, @Inject
 						if (ann == null) {
 							Class<?> userClass = ClassUtils.getUserClass(beanClass);
 							if (userClass != beanClass) {
@@ -360,7 +367,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 							}
 							candidates.add(candidate);
 						}
-						else if (candidate.getParameterCount() == 0) {
+						else if (candidate.getParameterCount() == 0) {//是否默认构造方法
 							defaultConstructor = candidate;
 						}
 					}

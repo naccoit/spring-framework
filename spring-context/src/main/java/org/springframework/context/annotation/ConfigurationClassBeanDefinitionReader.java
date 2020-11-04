@@ -122,6 +122,8 @@ class ConfigurationClassBeanDefinitionReader {
 	/**
 	 * Read {@code configurationModel}, registering bean definitions
 	 * with the registry based on its contents.
+	 *
+	 * 遍历每一个配置类
 	 */
 	public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
 		TrackedConditionEvaluator trackedConditionEvaluator = new TrackedConditionEvaluator();
@@ -146,9 +148,13 @@ class ConfigurationClassBeanDefinitionReader {
 			return;
 		}
 
+		// 如果当前的配置类是被导入的
 		if (configClass.isImported()) {
+			// 直接生成一个beanDefinition
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
+
+		// 不是被导入的,@Bean方法的处理
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
@@ -159,6 +165,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 	/**
 	 * Register the {@link Configuration} class itself as a bean definition.
+	 * 生成beanDefinition
 	 */
 	private void registerBeanDefinitionForImportedConfigurationClass(ConfigurationClass configClass) {
 		AnnotationMetadata metadata = configClass.getMetadata();
@@ -182,6 +189,8 @@ class ConfigurationClassBeanDefinitionReader {
 	/**
 	 * Read the given {@link BeanMethod}, registering bean definitions
 	 * with the BeanDefinitionRegistry based on its contents.
+	 *
+	 * @Bean 的方法处理
 	 */
 	@SuppressWarnings("deprecation")  // for RequiredAnnotationBeanPostProcessor.SKIP_REQUIRED_CHECK_ATTRIBUTE
 	private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) {
@@ -198,14 +207,18 @@ class ConfigurationClassBeanDefinitionReader {
 			return;
 		}
 
+		// 获取@Bean的注解信息
 		AnnotationAttributes bean = AnnotationConfigUtils.attributesFor(metadata, Bean.class);
 		Assert.state(bean != null, "No @Bean annotation attributes");
 
 		// Consider name and any aliases
+		// 获取名称,多个名称,数组获取
 		List<String> names = new ArrayList<>(Arrays.asList(bean.getStringArray("name")));
+		// 第一个是主名称
 		String beanName = (!names.isEmpty() ? names.remove(0) : methodName);
 
 		// Register aliases even when overridden
+		// 数组内剩下的是别名,添加到别名集合内
 		for (String alias : names) {
 			this.registry.registerAlias(beanName, alias);
 		}
@@ -223,6 +236,7 @@ class ConfigurationClassBeanDefinitionReader {
 		ConfigurationClassBeanDefinition beanDef = new ConfigurationClassBeanDefinition(configClass, metadata, beanName);
 		beanDef.setSource(this.sourceExtractor.extractSource(metadata, configClass.getResource()));
 
+		// .isStatic()
 		if (metadata.isStatic()) {
 			// static @Bean method
 			if (configClass.getMetadata() instanceof StandardAnnotationMetadata) {

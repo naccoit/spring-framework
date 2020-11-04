@@ -15,9 +15,9 @@ public class VeedoBeanFactoryPostProcessor implements BeanDefinitionRegistryPost
 
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-		RootBeanDefinition beanDefinition = new RootBeanDefinition();
-		beanDefinition.setBeanClass(User.class);
-		registry.registerBeanDefinition("user",beanDefinition);
+//		RootBeanDefinition beanDefinition = new RootBeanDefinition();
+//		beanDefinition.setBeanClass(User.class);
+//		registry.registerBeanDefinition("user",beanDefinition);
 	}
 
 	@Override

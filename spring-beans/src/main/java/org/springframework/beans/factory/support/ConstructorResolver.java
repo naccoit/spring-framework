@@ -126,6 +126,8 @@ class ConstructorResolver {
 	public BeanWrapper autowireConstructor(String beanName, RootBeanDefinition mbd,
 			@Nullable Constructor<?>[] chosenCtors, @Nullable Object[] explicitArgs) {
 
+		// 参数explicitArgs表示 getBean()方法内传入的参数
+
 		BeanWrapperImpl bw = new BeanWrapperImpl();
 		this.beanFactory.initBeanWrapper(bw);
 
@@ -133,6 +135,7 @@ class ConstructorResolver {
 		ArgumentsHolder argsHolderToUse = null;
 		Object[] argsToUse = null;
 
+		// 是否通过getBean()传了参数值
 		if (explicitArgs != null) {
 			argsToUse = explicitArgs;
 		}
@@ -169,7 +172,7 @@ class ConstructorResolver {
 				}
 			}
 
-			if (candidates.length == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {
+			if (candidates.length == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {// 如果只有一个无参构造方法,则直接使用无参构造方法实例化
 				Constructor<?> uniqueCandidate = candidates[0];
 				if (uniqueCandidate.getParameterCount() == 0) {
 					synchronized (mbd.constructorArgumentLock) {
@@ -197,13 +200,13 @@ class ConstructorResolver {
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
 
-			AutowireUtils.sortConstructors(candidates);
+			AutowireUtils.sortConstructors(candidates);// 对所有的构造方法进行排序,参数多的靠前
 			int minTypeDiffWeight = Integer.MAX_VALUE;
 			Set<Constructor<?>> ambiguousConstructors = null;
 			Deque<UnsatisfiedDependencyException> causes = null;
 
-			for (Constructor<?> candidate : candidates) {
-				int parameterCount = candidate.getParameterCount();
+			for (Constructor<?> candidate : candidates) {// 遍历每个构造
+				int parameterCount = candidate.getParameterCount();// 获取每个构造的参数个数
 
 				if (constructorToUse != null && argsToUse != null && argsToUse.length > parameterCount) {
 					// Already found greedy constructor that can be satisfied ->
@@ -222,7 +225,7 @@ class ConstructorResolver {
 						if (paramNames == null) {
 							ParameterNameDiscoverer pnd = this.beanFactory.getParameterNameDiscoverer();
 							if (pnd != null) {
-								paramNames = pnd.getParameterNames(candidate);
+								paramNames = pnd.getParameterNames(candidate);// 获取构造方法的各个参数名称
 							}
 						}
 						argsHolder = createArgumentArray(beanName, mbd, resolvedValues, bw, paramTypes, paramNames,
@@ -248,6 +251,21 @@ class ConstructorResolver {
 					argsHolder = new ArgumentsHolder(explicitArgs);
 				}
 
+				/**
+				 * 如果根据当前构造方法找到了对应的构造方法参数值，那么这个构造方法就是可用的，
+				 * 但是不一定这个构造方法就是最佳的，所以这里会涉及到是否有多个构造方法匹配了同样的值，
+				 * 这个时候就会用值和构造方法类型进行匹配程度的打分，找到一个最匹配的
+				 *
+				 *
+				 * 主要是计算找到的bean和构造方法参数类型匹配程度有多高。
+				 *
+				 * 假设bean的类型为A，A的父类是B，B的父类是C，同时A实现了接口D
+				 * 如果构造方法的参数类型为A，那么完全匹配，得分为0
+				 * 如果构造方法的参数类型为B，那么得分为2
+				 * 如果构造方法的参数类型为C，那么得分为4
+				 * 如果构造方法的参数类型为D，那么得分为1
+				 */
+				// 计算权重
 				int typeDiffWeight = (mbd.isLenientConstructorResolution() ?
 						argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
 				// Choose this constructor if it represents the closest match.
@@ -776,7 +794,7 @@ class ConstructorResolver {
 				args.rawArguments[paramIndex] = originalValue;
 			}
 			else {
-				MethodParameter methodParam = MethodParameter.forExecutable(executable, paramIndex);
+				MethodParameter methodParam = MethodParameter.forExecutable(executable, paramIndex);// 封装方法和参数
 				// No explicit match found: we're either supposed to autowire or
 				// have to fail creating an argument array for the given constructor.
 				if (!autowiring) {
@@ -851,9 +869,14 @@ class ConstructorResolver {
 		return resolvedArgs;
 	}
 
+	/**
+	 * 获取当前对象的构造器,如果有父类则获取父类对象构造器
+	 * @param constructor
+	 * @return
+	 */
 	protected Constructor<?> getUserDeclaredConstructor(Constructor<?> constructor) {
-		Class<?> declaringClass = constructor.getDeclaringClass();
-		Class<?> userClass = ClassUtils.getUserClass(declaringClass);
+		Class<?> declaringClass = constructor.getDeclaringClass();// 获取当前类对象
+		Class<?> userClass = ClassUtils.getUserClass(declaringClass);// 获取当前类的父类对象如果没有则返回当前对象
 		if (userClass != declaringClass) {
 			try {
 				return userClass.getDeclaredConstructor(constructor.getParameterTypes());
@@ -984,6 +1007,8 @@ class ConstructorResolver {
 
 	/**
 	 * Delegate for checking Java 6's {@link ConstructorProperties} annotation.
+	 *
+	 * 查看构造参数是否有@ConstructorProperties, 解析@ConstructorProperties
 	 */
 	private static class ConstructorPropertiesChecker {
 

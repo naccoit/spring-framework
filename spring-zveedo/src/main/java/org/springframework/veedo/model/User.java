@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
  * @author naccoitcc
  * @date 2020/9/19 12:44
  */
-//@Component
+@Component
 public class User implements InitializingBean {
 
-	@Autowired
-	Person getPerson;
+//	@Autowired
+//	Person getPerson;
 
 	private String name;
 

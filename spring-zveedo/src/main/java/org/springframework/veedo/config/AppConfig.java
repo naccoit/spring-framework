@@ -13,7 +13,6 @@ import org.springframework.veedo.model.User;
  * @author naccoitcc
  * @date 2020/9/19 12:44
  */
-@Configuration
 @ComponentScan("org.springframework.veedo")
 @Import(VeedoBeanFactoryPostProcessor.class)
 public class AppConfig {

@@ -90,7 +90,7 @@ final class PostProcessorRegistrationDelegate {
 					registryProcessors.add(registryProcessor);
 				}
 				else {
-					// 将其他类对象添加到标准集合(标准的后置处理器对象,无注册方法的)
+					// 将手动添加的其他类对象添加到标准集合(标准的后置处理器对象,无注册方法的)
 					regularPostProcessors.add(postProcessor);
 				}
 			}

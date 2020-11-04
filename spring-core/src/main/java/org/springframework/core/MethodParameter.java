@@ -807,6 +807,8 @@ public class MethodParameter {
 	 * @param parameterIndex the index of the parameter
 	 * @return the corresponding MethodParameter instance
 	 * @since 5.0
+	 *
+	 * 普通方法封装&构造方法封装器
 	 */
 	public static MethodParameter forExecutable(Executable executable, int parameterIndex) {
 		if (executable instanceof Method) {

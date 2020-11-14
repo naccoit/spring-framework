@@ -280,15 +280,21 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * Create a proxy with the configured interceptors if the bean is
 	 * identified as one to proxy by the subclass.
 	 * @see #getAdvicesAndAdvisorsForBean
+	 *
+	 * 正常情况进行AOP的地方
 	 */
 	@Override
 	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
 		if (bean != null) {
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			// earlyProxyReferences中存的是哪些提前进行了AOP的bean beanName:AOP之前的对象
+			// 注意earlyProxyReferences中并没有存AOP之后的代理对象 BeanPostProcessor
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
+				// 没有提前进行过AOP,则进行AOP
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
+		// 为什么不返回代理对象呢
 		return bean;
 	}
 

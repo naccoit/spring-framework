@@ -19,7 +19,7 @@ public class Niubility {
 	}
 
 	public void setName(String name) {
-		System.out.println("set方法");
+		System.out.println("set方法, " + "name=" + name);
 		this.name = name;
 	}
 }

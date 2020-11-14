@@ -341,6 +341,7 @@ public abstract class AopUtils {
 		// Use reflection to invoke the method.
 		try {
 			ReflectionUtils.makeAccessible(method);
+			// 被代理的对象执行方法,所以如果在这个流程中调用当前类中的其他方法,那么执行
 			return method.invoke(target, args);
 		}
 		catch (InvocationTargetException ex) {

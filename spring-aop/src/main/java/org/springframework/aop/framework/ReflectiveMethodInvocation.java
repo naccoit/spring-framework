@@ -160,6 +160,7 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	public Object proceed() throws Throwable {
 		// We start with an index of -1 and increment early.
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
+			// 执行目标对象方法
 			return invokeJoinpoint();
 		}
 
@@ -192,6 +193,8 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	 * Subclasses can override this to use custom invocation.
 	 * @return the return value of the joinpoint
 	 * @throws Throwable if invoking the joinpoint resulted in an exception
+	 *
+	 * 执行目标对象方法
 	 */
 	@Nullable
 	protected Object invokeJoinpoint() throws Throwable {

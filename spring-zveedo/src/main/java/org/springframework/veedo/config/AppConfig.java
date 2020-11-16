@@ -2,10 +2,7 @@ package org.springframework.veedo.config;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.veedo.model.Person;
 import org.springframework.veedo.model.User;
 
@@ -15,6 +12,7 @@ import org.springframework.veedo.model.User;
  */
 @ComponentScan("org.springframework.veedo")
 @Import(VeedoBeanFactoryPostProcessor.class)
+@EnableAspectJAutoProxy
 public class AppConfig {
 
 	@Bean

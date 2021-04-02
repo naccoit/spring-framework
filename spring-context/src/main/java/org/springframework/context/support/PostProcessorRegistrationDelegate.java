@@ -83,7 +83,7 @@ final class PostProcessorRegistrationDelegate {
 					BeanDefinitionRegistryPostProcessor registryProcessor =
 							(BeanDefinitionRegistryPostProcessor) postProcessor;
 
-					// 调用 注册BeanDefinition的registry注册方法
+					/** 调用 注册BeanDefinition的registry注册方法 */
 					registryProcessor.postProcessBeanDefinitionRegistry(registry);
 
 					// 将这类对象添加到一个集合(具有注册接口的子类对象)
@@ -112,44 +112,44 @@ final class PostProcessorRegistrationDelegate {
 
 				// 这里过滤,检查是否实现了PriorityOrdered,优先级较高
 				if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
-					// 获取BeanFactoryPostProcessor后置处理器对象,并添加到当前集合内
+					/** 获取BeanFactoryPostProcessor后置处理器对象,并添加到当前集合内 */
 					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
 					processedBeans.add(ppName);
 				}
 			}
 
-			// 排序:根据PriorityOrdered::getOrder返回值进行排序,升序
+			/** 排序:根据PriorityOrdered::getOrder返回值进行排序,升序 */
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 
 			// 将BeanFactoryPostProcessor添加进来
 			registryProcessors.addAll(currentRegistryProcessors);
 
-			// 执行BeanFactoryPostProcessor实现的注册BeanDefinition的方法
+			/** 执行BeanFactoryPostProcessor实现的注册BeanDefinition的方法 */
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry, beanFactory.getApplicationStartup());
 
 			// 清除本次的临时BeanFactoryPostProcessor缓存变量,以供后面重复使用
 			currentRegistryProcessors.clear();
 
 			// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
-			// 这里再获取一次,防止有扫描添加新的到容器内
+			/** 这里再获取一次,防止有扫描添加新的到容器内 */
 			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 
 			for (String ppName : postProcessorNames) {
 				// 这里过滤,检查是否实现了Ordered,并且不包含上面处理过的BeanDefinitionRegistryPostProcessor
 				if (!processedBeans.contains(ppName) && beanFactory.isTypeMatch(ppName, Ordered.class)) {
-					// 获取BeanFactoryPostProcessor后置处理器对象,并添加到当前集合内
+					/** 获取BeanFactoryPostProcessor后置处理器对象,并添加到当前集合内 */
 					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
 					processedBeans.add(ppName);
 				}
 			}
 
-			// 这里是按照Ordered记录的顺序进行排序,升序
+			/** 这里是按照Ordered记录的顺序进行排序,升序 */
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 
 			// 这里记录了本次优先级中等的BeanDefinitionRegistryPostProcessor
 			registryProcessors.addAll(currentRegistryProcessors);
 
-			// 调用本次优先级的BeanFactoryPostProcessor后置注册的处理器方法
+			/** 调用本次优先级的BeanFactoryPostProcessor后置注册的处理器方法 */
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry, beanFactory.getApplicationStartup());
 
 			// 清除本次的临时BeanFactoryPostProcessor缓存变量,以供后面重复使用
@@ -159,7 +159,7 @@ final class PostProcessorRegistrationDelegate {
 			boolean reiterate = true;
 			while (reiterate) {
 				reiterate = false;
-				// 这里再重新获取所有的BeanFactoryPostProcessor后置处理器对象的名称集合,防止有新的处理器对象添加进容器内
+				/** 这里再重新获取所有的BeanFactoryPostProcessor后置处理器对象的名称集合,防止有新的处理器对象添加进容器内 */
 				postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 				for (String ppName : postProcessorNames) {
 					// 这里过滤掉之前两次处理过的BeanFactoryPostProcessor后置处理器
@@ -176,7 +176,7 @@ final class PostProcessorRegistrationDelegate {
 				// 将后置处理器对象添加进集合内,三种优先级都有
 				registryProcessors.addAll(currentRegistryProcessors);
 
-				// 调用后置处理器方法
+				/** 调用后置注册的处理器方法 */
 				invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry, beanFactory.getApplicationStartup());
 
 				// 清除存储后置处理器的临时变量
@@ -224,9 +224,9 @@ final class PostProcessorRegistrationDelegate {
 		}
 
 		// First, invoke the BeanFactoryPostProcessors that implement PriorityOrdered.
-		// 首先,这里对优先级最高的正常的BeanFactoryPostProcessor后置处理器排序
+		/** 首先,这里对优先级最高的正常的BeanFactoryPostProcessor后置处理器排序 */
 		sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
-		// 执行后置处理器正常方法
+		/** 执行后置处理器正常方法 */
 		invokeBeanFactoryPostProcessors(priorityOrderedPostProcessors, beanFactory);
 
 		// Next, invoke the BeanFactoryPostProcessors that implement Ordered.

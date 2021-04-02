@@ -13,6 +13,12 @@ import org.springframework.veedo.model.User;
  */
 public class VeedoBeanFactoryPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
+	/**
+	 * 注册BeanDefinition的registry注册方法
+	 *
+	 * @param registry the bean definition registry used by the application context
+	 * @throws BeansException
+	 */
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 //		RootBeanDefinition beanDefinition = new RootBeanDefinition();

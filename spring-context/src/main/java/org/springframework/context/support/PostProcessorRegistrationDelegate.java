@@ -67,7 +67,7 @@ final class PostProcessorRegistrationDelegate {
 		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
 		Set<String> processedBeans = new HashSet<>();
 
-		// 默认的BeanFactory实现了BeanDefinitionRegistry接口
+		// 默认的DefaultListableBeanFactory实现了BeanDefinitionRegistry接口
 		if (beanFactory instanceof BeanDefinitionRegistry) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
@@ -110,7 +110,7 @@ final class PostProcessorRegistrationDelegate {
 
 			for (String ppName : postProcessorNames) {
 
-				// 这里过滤,检查是否实现了PriorityOrdered,优先级较高
+				// 这里过滤,检查是否实现了PriorityOrdered接口,优先级较高
 				if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
 					/** 获取BeanFactoryPostProcessor后置处理器对象,并添加到当前集合内 */
 					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));

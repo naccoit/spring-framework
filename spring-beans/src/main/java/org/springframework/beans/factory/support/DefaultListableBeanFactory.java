@@ -932,7 +932,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
-		// 遍历bd
+		// 遍历bd所有bean
 		for (String beanName : beanNames) {
 
 			// 对beanDefinition进行合并，基于合并后的beanDefinition去创建bean

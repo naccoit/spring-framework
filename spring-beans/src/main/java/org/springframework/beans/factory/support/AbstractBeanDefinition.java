@@ -294,6 +294,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * {@code initMethodName}, and {@code destroyMethodName} if specified
 	 * in the given bean definition.
 	 * </ul>
+	 *
+	 * 子BeanDefinition的属性覆盖父级BeanDefinition的配置属性
 	 */
 	public void overrideFrom(BeanDefinition other) {
 		if (StringUtils.hasLength(other.getBeanClassName())) {

@@ -582,8 +582,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Invoke factory processors registered as beans in the context.
 
 				// BeanFactory准备好了之后,执行BeanFactoryPostProcessor.开始对BeanFactory进行处理
-				// 默认请款下:
-				// 此时BeanFactory的BeanDefinitionMao中有6个BeanDefinition,5个基础的BeanDefinition + AppConfig被注册到容器的BeanDefinition
+				// 默认情况下:
+				// 此时BeanFactory的BeanDefinitionMap中有6个BeanDefinition,5个基础的BeanDefinition + AppConfig被注册到容器的BeanDefinition
 				// 而这6个中只有一个BeanFactoryPostProcessor:ConfigurationClassPostProcessor
 				// 这里会执行ConfigurationClassPostProcessor进行@Component的扫描.扫描得到BeanDefinition,并注册到BeanFactory
 				// 注意:扫描的过程中可能会扫描出其他的BeanFactoryPostProcessor,那么这些BeanFactoryPostProcessor也得在

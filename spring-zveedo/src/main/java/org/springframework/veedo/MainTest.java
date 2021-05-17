@@ -2,6 +2,9 @@ package org.springframework.veedo;
 
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -13,6 +16,7 @@ import org.springframework.veedo.model.Person;
 import org.springframework.veedo.service.UserService;
 import org.springframework.veedo.service.UserServiceImpl;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -38,7 +42,8 @@ public class MainTest {
 		applicationContext.refresh();
 
 		System.out.println(applicationContext.getBean("user"));*/
-
+		applicationContext.getEnvironment().getSystemProperties();
+		applicationContext.getEnvironment().getSystemEnvironment();
 
 
 		AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(applicationContext);
@@ -83,5 +88,9 @@ public class MainTest {
 
 		// 语法糖实例化顺序验证
 //		Niubility niubility = new Niubility(){{setName("niubi");}};
+
+		AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition().getBeanDefinition();
+		beanDefinition.setBeanClass(Fucker.class);
+		beanDefinition.setScope("prototype");
 	}
 }

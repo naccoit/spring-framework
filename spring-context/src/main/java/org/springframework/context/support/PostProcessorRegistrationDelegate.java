@@ -58,6 +58,7 @@ final class PostProcessorRegistrationDelegate {
 
 	/**
 	 * 处理回调BeanFactoryPostProcessor后置处理器方法
+	 * 扫描就是在执行bean工厂的后置处理器中完成的
 	 * @param beanFactory
 	 * @param beanFactoryPostProcessors
 	 */

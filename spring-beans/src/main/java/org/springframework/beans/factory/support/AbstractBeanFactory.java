@@ -255,7 +255,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
-		// 在单例池中获取beanName，
+		// 根据beanName从单例池中获取对象
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
@@ -273,12 +273,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		else {
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
+			// 原型bean正在创建中
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}
 
 			// Check if bean definition exists in this factory.
 			BeanFactory parentBeanFactory = getParentBeanFactory();
+			// 当前beanFactory中不存在beanName对应的BeanDefinition的话, 则从父beanFactory中获取
 			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
 				// Not found -> check parent.
 				String nameToLookup = originalBeanName(name);
@@ -312,21 +314,24 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 				// 这块还是一样，获取最终合并后的beanDefinition信息
 				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
-				// 检查是否抽象，是则不能创建，抛异常，否则继续向下
+				// 检查是否抽象，是则不能创建bean，抛异常
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.
+				// 检查bean的依赖情况
 				String[] dependsOn = mbd.getDependsOn();
 				if (dependsOn != null) {
 					for (String dep : dependsOn) {
 
-						// 检查循环依赖
+						// 检查是否循环依赖
 						if (isDependent(beanName, dep)) {
 							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 									"Circular depends-on relationship between '" + beanName + "' and '" + dep + "'");
 						}
+						// 设置bean的依赖关系
 						registerDependentBean(dep, beanName);
 						try {
+							// <<递归>> 先创建依赖的bean
 							getBean(dep);
 						}
 						catch (NoSuchBeanDefinitionException ex) {
@@ -358,6 +363,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					Object prototypeInstance = null;
 					try {
 						beforePrototypeCreation(beanName);
+						// 因为是原型模式, 创建完成后直接返回
 						prototypeInstance = createBean(beanName, mbd, args);
 					}
 					finally {
@@ -1416,7 +1422,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						String parentBeanName = transformedBeanName(bd.getParentName());
 						if (!beanName.equals(parentBeanName)) {
 
-							// 这里获取父类的beanDefinition
+							// <<递归>> 这里获取父类的beanDefinition
 							pbd = getMergedBeanDefinition(parentBeanName);
 						}
 						else {
@@ -1437,7 +1443,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					}
 					// Deep copy with overridden values.
 					// 这里进行深拷贝，并合成 --》 RootBeanDefinition
+					// pbd表示父BeanDefinition, bd表示当前BeanDefinition
 					mbd = new RootBeanDefinition(pbd);
+					// 把bd的属性设置给mbd, 而mbd是基于pbd来的, 这里的优先级是当前大于父级
 					mbd.overrideFrom(bd);
 				}
 
@@ -1545,6 +1553,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			throws CannotLoadBeanClassException {
 
 		try {
+			// BeanDefinition中的beanClass存的是类的Class对象, 获取直接返回
 			if (mbd.hasBeanClass()) {
 				return mbd.getBeanClass();
 			}
@@ -1553,6 +1562,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						() -> doResolveBeanClass(mbd, typesToMatch), getAccessControlContext());
 			}
 			else {
+				// 如果BeanDefinition中beanClass存的是类的全限定名,则
+				// 加载BeanDefinition中beanClass中所指定的类名所对应的类
 				return doResolveBeanClass(mbd, typesToMatch);
 			}
 		}
@@ -1592,8 +1603,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 		}
 
+		// 获取BeanDefinition中beanClass属性的值, 类的全限定名
 		String className = mbd.getBeanClassName();
 		if (className != null) {
+			// ClassName可以有SpEL, 所以需要解析, 解析出来后也是一个类的全限定名
 			Object evaluated = evaluateBeanDefinitionString(className, mbd);
 			if (!className.equals(evaluated)) {
 				// A dynamically resolved expression, supported as of 4.2...
@@ -1863,6 +1876,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param beanName the canonical bean name
 	 * @param mbd the merged bean definition
 	 * @return the object to expose for the bean
+	 *
+	 * 判断是不是FactoryBean
 	 */
 	protected Object getObjectForBeanInstance(
 			Object beanInstance, String name, String beanName, @Nullable RootBeanDefinition mbd) {

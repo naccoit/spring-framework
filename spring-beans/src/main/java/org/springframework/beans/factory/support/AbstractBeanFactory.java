@@ -1445,7 +1445,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					// 这里进行深拷贝，并合成 --》 RootBeanDefinition
 					// pbd表示父BeanDefinition, bd表示当前BeanDefinition
 					mbd = new RootBeanDefinition(pbd);
-					// 把bd的属性设置给mbd, 而mbd是基于pbd来的, 这里的优先级是当前大于父级
+					// 把子bd的属性设置给父mbd, 而mbd是基于pbd来的, 这里的优先级是当前大于父级
 					mbd.overrideFrom(bd);
 				}
 

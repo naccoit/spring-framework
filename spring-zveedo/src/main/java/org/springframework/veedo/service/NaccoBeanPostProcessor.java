@@ -9,6 +9,7 @@ import org.springframework.beans.factory.config.InstantiationAwareBeanPostProces
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.veedo.model.User;
 
 /**
  * @author naccoitcc
@@ -22,7 +23,7 @@ public class NaccoBeanPostProcessor implements InstantiationAwareBeanPostProcess
 		if (beanName.equals("user")) {
 			System.out.println("实例化前...." + beanName);
 		}
-		return null;
+		return new User();
 	}
 
 	@Override

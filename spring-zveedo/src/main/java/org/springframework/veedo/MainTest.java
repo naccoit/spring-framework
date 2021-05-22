@@ -31,7 +31,7 @@ public class MainTest {
 
 	public static void main(String[] args) {
 
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
+		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
 
 		/*ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(applicationContext);
 
@@ -42,18 +42,19 @@ public class MainTest {
 		applicationContext.refresh();
 
 		System.out.println(applicationContext.getBean("user"));*/
-		applicationContext.getEnvironment().getSystemProperties();
-		applicationContext.getEnvironment().getSystemEnvironment();
+//		applicationContext.getEnvironment().getSystemProperties();
+//		applicationContext.getEnvironment().getSystemEnvironment();
 
 
-		AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(applicationContext);
+//		AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(applicationContext);
 
-		reader.register(Fucker.class);
+//		reader.register(Fucker.class);
 
-		applicationContext.refresh();
+//		applicationContext.refresh();
 
-		System.out.println(applicationContext.getBean("fucker"));
-		System.out.println(applicationContext.getBean("fucker"));
+		// dependsOn 循环依赖问题(三者循环依赖也是有问题的)
+		System.out.println(applicationContext.getBean("aDependsOn"));
+//		System.out.println(applicationContext.getBean("fucker"));
 
 //		Person person = (Person) applicationContext.getBean("person");
 //		System.out.println(person.getName());
@@ -89,8 +90,8 @@ public class MainTest {
 		// 语法糖实例化顺序验证
 //		Niubility niubility = new Niubility(){{setName("niubi");}};
 
-		AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition().getBeanDefinition();
-		beanDefinition.setBeanClass(Fucker.class);
-		beanDefinition.setScope("prototype");
+//		AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder.genericBeanDefinition().getBeanDefinition();
+//		beanDefinition.setBeanClass(Fucker.class);
+//		beanDefinition.setScope("prototype");
 	}
 }

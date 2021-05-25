@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
  * @author naccoitcc
  * @since 2021/5/22 13:17
  */
-@Component
+//@Component
 @DependsOn("ADependsOn")
 public class CDependsOn {
 }

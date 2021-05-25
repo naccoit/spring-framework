@@ -23,7 +23,8 @@ public class NaccoBeanPostProcessor implements InstantiationAwareBeanPostProcess
 		if (beanName.equals("user")) {
 			System.out.println("实例化前...." + beanName);
 		}
-		return new User();
+		// 实例化前,可以自行创建对象,直接走到初始化后逻辑
+		return null;
 	}
 
 	@Override
@@ -34,9 +35,18 @@ public class NaccoBeanPostProcessor implements InstantiationAwareBeanPostProcess
 		return true;
 	}
 
+	/**
+	 * Post-process the given property values before the factory applies them to the given bean, without any need for property descriptors.
+	 *
+	 * @param pvs      the property values that the factory is about to apply (never {@code null})
+	 * @param bean     the bean instance created, but whose properties have not yet been set
+	 * @param beanName the name of the bean
+	 * @return
+	 * @throws BeansException
+	 */
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) throws BeansException {
-		if (beanName.equals("user")){
+		if (beanName.equals("user")) {
 			System.out.println("填充属性前..." + beanName);
 		}
 		return null;
@@ -44,7 +54,7 @@ public class NaccoBeanPostProcessor implements InstantiationAwareBeanPostProcess
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		if (beanName.equals("user")){
+		if (beanName.equals("user")) {
 			System.out.println("初始化前..." + beanName);
 		}
 		return null;
@@ -52,7 +62,7 @@ public class NaccoBeanPostProcessor implements InstantiationAwareBeanPostProcess
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (beanName.equals("user")){
+		if (beanName.equals("user")) {
 			System.out.println("初始化后..." + beanName);
 		}
 		return null;

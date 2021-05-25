@@ -33,6 +33,9 @@ public class MainTest {
 
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
 
+		// 两种方式设置ClassLoader
+		//		applicationContext.getBeanFactory().setBeanClassLoader("xxxxx");
+		//		Thread.currentThread().setContextClassLoader("XXXX");
 		/*ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(applicationContext);
 
 		int scan = scanner.scan("org.springframework.veedo.model");
@@ -53,8 +56,8 @@ public class MainTest {
 //		applicationContext.refresh();
 
 		// dependsOn 循环依赖问题(三者循环依赖也是有问题的)
-		System.out.println(applicationContext.getBean("aDependsOn"));
-//		System.out.println(applicationContext.getBean("fucker"));
+//		System.out.println(applicationContext.getBean("aDependsOn"));
+		System.out.println(applicationContext.getBean("student"));
 
 //		Person person = (Person) applicationContext.getBean("person");
 //		System.out.println(person.getName());

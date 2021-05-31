@@ -178,6 +178,9 @@ public final class CachedIntrospectionResults {
 			return results;
 		}
 
+		/**
+		 * 真正做解析的地方是在这个构造方法内部
+		 */
 		results = new CachedIntrospectionResults(beanClass);
 		ConcurrentMap<Class<?>, CachedIntrospectionResults> classCacheToUse;
 
@@ -268,12 +271,16 @@ public final class CachedIntrospectionResults {
 	 * Create a new CachedIntrospectionResults instance for the given class.
 	 * @param beanClass the bean class to analyze
 	 * @throws BeansException in case of introspection failure
+	 *
+	 * 真正做解析的地方是在这个构造方法内部2
 	 */
 	private CachedIntrospectionResults(Class<?> beanClass) throws BeansException {
 		try {
 			if (logger.isTraceEnabled()) {
 				logger.trace("Getting BeanInfo for class [" + beanClass.getName() + "]");
 			}
+
+			// *****getBeanInfo*****
 			this.beanInfo = getBeanInfo(beanClass);
 
 			if (logger.isTraceEnabled()) {

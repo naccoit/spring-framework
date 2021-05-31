@@ -249,7 +249,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 	 */
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
-		// 获取beanType中的注入点,将类中的注入点全部拿到
+		// 获取beanType中的**注入点**,将类中的注入点全部拿到
 		InjectionMetadata metadata = findAutowiringMetadata(beanName, beanType, null);
 		metadata.checkConfigMembers(beanDefinition);
 	}
@@ -466,6 +466,7 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 		// Fall back to class name as cache key, for backwards compatibility with custom callers.
 		String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
 		// Quick check on the concurrent map first, with minimal locking.
+		// 先从缓存中查找注入点
 		InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
 		if (InjectionMetadata.needsRefresh(metadata, clazz)) {
 			synchronized (this.injectionMetadataCache) {
@@ -527,12 +528,14 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 				}
 				MergedAnnotation<?> ann = findAutowiredAnnotation(bridgedMethod);
 				if (ann != null && method.equals(ClassUtils.getMostSpecificMethod(method, clazz))) {
+					// 静态方法不能注入属性
 					if (Modifier.isStatic(method.getModifiers())) {
 						if (logger.isInfoEnabled()) {
 							logger.info("Autowired annotation is not supported on static methods: " + method);
 						}
 						return;
 					}
+					// 方法参数列表为0,无参数,不能注入属性
 					if (method.getParameterCount() == 0) {
 						if (logger.isInfoEnabled()) {
 							logger.info("Autowired annotation should only be used on methods with parameters: " +
@@ -546,6 +549,11 @@ public class AutowiredAnnotationBeanPostProcessor implements SmartInstantiationA
 			});
 
 			elements.addAll(0, currElements);
+
+			/**
+			 * 获取当前类的父类
+			 * do while 循环查找父类的注解
+			 */
 			targetClass = targetClass.getSuperclass();
 		}
 		while (targetClass != null && targetClass != Object.class);

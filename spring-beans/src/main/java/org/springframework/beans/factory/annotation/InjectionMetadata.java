@@ -75,6 +75,9 @@ public class InjectionMetadata {
 
 	private final Collection<InjectedElement> injectedElements;
 
+	/**
+	 * 存储某个类的所有的注入点信息
+	 */
 	@Nullable
 	private volatile Set<InjectedElement> checkedElements;
 
@@ -103,6 +106,11 @@ public class InjectionMetadata {
 		return this.targetClass != clazz;
 	}
 
+	/**
+	 * 存储注入点信息
+	 *
+	 * @param beanDefinition
+	 */
 	public void checkConfigMembers(RootBeanDefinition beanDefinition) {
 		Set<InjectedElement> checkedElements = new LinkedHashSet<>(this.injectedElements.size());
 		for (InjectedElement element : this.injectedElements) {

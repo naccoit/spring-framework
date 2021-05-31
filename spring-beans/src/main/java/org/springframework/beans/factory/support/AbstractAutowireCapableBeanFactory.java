@@ -1443,6 +1443,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
+		// 是否在BeanDefinition中设置了值
 		PropertyValues pvs = (mbd.hasPropertyValues() ? mbd.getPropertyValues() : null);
 
 		/**
@@ -1481,6 +1482,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			for (InstantiationAwareBeanPostProcessor bp : getBeanPostProcessorCache().instantiationAware) {
 				/**
 				 * 填充属性前
+				 * 在此处进行注入
 				 */
 				// 开始注入:调用BeanPostProcessor分别解析@Autowired, @Resource, @Value 得到属性值
 				PropertyValues pvsToUse = bp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
@@ -1561,7 +1563,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		Set<String> autowiredBeanNames = new LinkedHashSet<>(4);
+
+		// 找到有对应set方法的属性
 		String[] propertyNames = unsatisfiedNonSimpleProperties(mbd, bw);
+
 		for (String propertyName : propertyNames) {
 			try {
 				PropertyDescriptor pd = bw.getPropertyDescriptor(propertyName);
@@ -1569,15 +1574,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				// even if it technically is a unsatisfied, non-simple property.
 				if (Object.class != pd.getPropertyType()) {
 
-					// 方法的参数信息
+					// set方法的参数信息
 					MethodParameter methodParam = BeanUtils.getWriteMethodParameter(pd);
 
 					// Do not allow eager init for type matching in case of a prioritized post-processor.
+					// 当前bean是否实现了PriorityOrdered
 					boolean eager = !(bw.getWrappedInstance() instanceof PriorityOrdered);
-
-					// 依赖描述
+					// 根据set方法的参数信息生成另外一个依赖描述
 					DependencyDescriptor desc = new AutowireByTypeDependencyDescriptor(methodParam, eager);
 
+					// 根据依赖描述查找bean
 					// 根据类型找bean,这就是byType,
 					Object autowiredArgument = resolveDependency(desc, beanName, autowiredBeanNames, converter);
 					if (autowiredArgument != null) {
@@ -1613,10 +1619,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	protected String[] unsatisfiedNonSimpleProperties(AbstractBeanDefinition mbd, BeanWrapper bw) {
 		Set<String> result = new TreeSet<>();
 		PropertyValues pvs = mbd.getPropertyValues();
+		// 属性的描述
 		PropertyDescriptor[] pds = bw.getPropertyDescriptors();
 		for (PropertyDescriptor pd : pds) {
-			if (pd.getWriteMethod() != null && !isExcludedFromDependencyCheck(pd) && !pvs.contains(pd.getName()) &&
-					!BeanUtils.isSimpleProperty(pd.getPropertyType())) {
+
+			// 被描述的类必须有set方法
+			if (pd.getWriteMethod() != null
+					&& !isExcludedFromDependencyCheck(pd)
+					&& !pvs.contains(pd.getName())
+					&& !BeanUtils.isSimpleProperty(pd.getPropertyType())) {
+
 				result.add(pd.getName());
 			}
 		}
